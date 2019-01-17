@@ -1,4 +1,43 @@
 
+class MasterControl {
+
+    constructor(numElevators, numFloors) {
+        self.numElevators = numElevators;
+        self.numFloors = numFloors;
+
+        // initialize elevator and floor control objects into arrays
+        
+        self.inServiceElevators = [];
+        self.outOfServiceElevators = [];
+        for(var i = 0; i < numElevators; i++) {
+            self.floorStops.push(new Elevator(i, numFloors));
+        } 
+
+        self.floorControllers = [];
+        for(var i = 0; i < numFloors; i++) {
+            self.floorStops.push(new FloorControl(i+1));
+        }
+    }
+
+    retrieveRequests() {
+        floorControllers.forEach(floorController => {
+            while (floorController.requests.length) {
+                let request = floorController.retrieveRequest();
+                self.requestElevatorToFloor(floorController.floor, request);
+            }
+        });
+        self.checkInServiceElevators()
+    }
+
+
+    requestElevatorToFloor(floor, destination) {
+        // if there exists elevator.currentFloor == floor, request this elevator
+        // else if there exists an occupied elevator who's path will cross with the floor, request this elevator
+        // else, request closed elevator unoccupied
+    }
+    
+}
+
 class FloorControl {
     
     constructor(floor) {
@@ -14,14 +53,13 @@ class FloorControl {
         return self.requests.shift(); // pop front item from queue
     }
 
-
-
 }
 
 
 class Elevator {
     
-    constructor(floors) {
+    constructor(id, floors) {
+        self.id = id;
         self.topFloor = floors;
         self.inService = true;
         self.doorsOpen = false;

@@ -7,7 +7,9 @@ My approach to this problem, is going to be a design with a controller that inte
 
 Because of feature #6 in the challenge, I am designing this simulation with the idea that the elevators themselves have no controls. The idea is that people will make requests from any floor, and the elevator will come to that floor and open the doors. After the doors have been opened for some period of time (5 seconds?), the doors will close again and the elevator will head towards it's new destination.
 
-Future considerations for larger numbers of elevators would be some sort of load balancing system, to reduce wear and tear.
+I was not able to finish as far as I would have liked, but I did come up with a system that I think would work well. Would this system scale to a large number of elevators? Probably not very well, as it was not exactly designed asynchronously. But with completely reasonable modifications, this design could scale up to 10 elevators with no major issues.
+
+
 
 #
 
@@ -16,15 +18,18 @@ Future considerations for larger numbers of elevators would be some sort of load
 #### MasterControl
 Receives the initial constraints for the simulation and creates the `Elevator` and `FloorControl` objects within it, which it will interact with and oversee their operations
 
-#### FloorControl
-Receives requests from the user on the floor which it lives on, and stores those in a queue, which will be read by the  `MasterControl`
+It watches for requests from each floor, and determines which elevator is optimal to handle the request. It then sends that elevator a new destination to jet towards.
 
-This is essentially a queue wrapper
+#### FloorControl
+This is essentially a queue wrapper. It receives requests from the user on the floor which it lives on, and stores those in a queue. The `MasterControl` will read these instructions and take control from here.
 
 #### Elevator
-This class is not responsible for any groundbreaking decision or logic, it is sent directions from `MasterControl`
+This class is not responsible for any groundbreaking decision or logic, that is all decided in `MasterControl`. But, it is responsible for taking direction. It stores a list of stops it needs to make, as well as many other member variables. With all of this in mind, it moves where it needs to move, stops where it needs stop, and reports its' decisions along the way.
 
 
+#
+
+### Pseudo/JavaScript/Design Syntax
 ```
 MasterControl {
     numElevators: integer
@@ -64,7 +69,7 @@ FloorControl() { // controls on each floor where requests originate
         
     }
 
-    submitRequest(floor) { // takes a request from user, stores to queue
+    submitRequest(floor) { // sits and takes a request from user, stores to queue
         
     }
 
@@ -72,7 +77,7 @@ FloorControl() { // controls on each floor where requests originate
         
     }
 
-    
+
 
 }
 ```
@@ -100,6 +105,16 @@ Elevator {
         if it finishes its' stops, pause and totalTrips++
         
         if totalTrips reaches 100, inService = false
+    }
+
+    
+    changeDestination(destination) { 
+        this function will modify where the elevator is supposed to going, if a new destination is requested.
+        
+        it will still follow the original path, but will change its' final destination
+
+        called from the MasterControl 
+
     }
     
     reachedStop() { // tracks if reached a stop
