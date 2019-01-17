@@ -19,6 +19,8 @@ Receives the initial constraints for the simulation and creates the `Elevator` a
 #### FloorControl
 Receives requests from the user on the floor which it lives on, and stores those in a queue, which will be read by the  `MasterControl`
 
+This is essentially a queue wrapper
+
 #### Elevator
 This class is not responsible for any groundbreaking decision or logic, it is sent directions from `MasterControl`
 
@@ -48,20 +50,29 @@ MasterControl {
         else if there exists an occupied elevator who's path will cross with the floor, request this elevator
         else, request closed elevator unoccupied
     }
-
-
     
 }
 ```
+
 ```
 FloorControl() { // controls on each floor where requests originate
+    
     floor: integer // the floor where this control lives 
     requestedFloors: queue of integers // the currently requested floor
 
-    request(requestedFloor) {
+    constructor(floor) {
         
     }
 
+    submitRequest(floor) { // takes a request from user, stores to queue
+        
+    }
+
+    retrieveRequest() { // get item from front of request queue
+        
+    }
+
+    
 
 }
 ```
@@ -78,6 +89,7 @@ Elevator {
     
     constructor(floors) {
         self.topFloor = floors
+        // more initilization
     }
 
     move() {
@@ -89,7 +101,10 @@ Elevator {
         
         if totalTrips reaches 100, inService = false
     }
+    
+    reachedStop() { // tracks if reached a stop
 
+    }
 
     toggleDoors() {
         if doorsOpen, report 'Doors Closing'
