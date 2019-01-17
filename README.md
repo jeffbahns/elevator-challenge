@@ -7,11 +7,22 @@ My approach to this problem, is going to be a design with a controller that inte
 
 Because of feature #6 in the challenge, I am designing this simulation with the idea that the elevators themselves have no controls. The idea is that people will make requests from any floor, and the elevator will come to that floor and open the doors. After the doors have been opened for some period of time (5 seconds?), the doors will close again and the elevator will head towards it's new destination.
 
-The MasterControl receives the initial constraints for the simulation and create the Elevator and FloorControl classes inside of it. It will host the interaction between those classes and oversee all operations.
-
 Future considerations for larger numbers of elevators would be some sort of load balancing system, to reduce wear and tear.
 
-classes:
+#
+
+## Classes
+
+#### MasterControl
+Receives the initial constraints for the simulation and creates the `Elevator` and `FloorControl` objects within it, which it will interact with and oversee their operations
+
+#### FloorControl
+Receives requests from the user on the floor which it lives on, and stores those in a queue, which will be read by the  `MasterControl`
+
+#### Elevator
+This class is not responsible for any groundbreaking decision or logic, it is sent directions from `MasterControl`
+
+
 ```
 MasterControl {
     numElevators: integer
@@ -28,9 +39,7 @@ MasterControl {
 
     retrieveRequests() {
         floorControllers.forEach(floorController => {
-            if floorController.requestedFloor {
-
-            }
+            pop each request off the queue from each floor, and call self.requestElevatorToFloor()
         });
     }
 
@@ -65,13 +74,14 @@ Elevator {
     totalTrips: integer
     destination: 
     direction: string ('up', 'down', or 'none')
-
-    constructor() {
-
+    topFloor: integer
+    
+    constructor(floors) {
+        self.topFloor = floors
     }
 
     move() {
-        if headed in a direction, change currentFloor to either +/- 1
+        if headed in a direction, change currentFloor to either +/- 1, but do not exceed topFloor or go below floor 1
 
         if it reaches a stop, toggleDoors(), wait, toggleDoors() again
         
